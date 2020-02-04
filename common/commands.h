@@ -3,14 +3,79 @@
 #include <QVector>
 #include <QString>
 
+enum class magic_bytes{
+	play_byte = '1',
+	pause_byte = '2',
+	rewind_byte = '3'
+};
+
 class command{
 public:
     virtual QByteArray serialize()const=0;
     virtual void deserialize(QByteArray data)=0;
     virtual char magic_byte()const=0;
+	virtual quint32 bytes_len()const=0;
 };
 
 class media_command:public command{
+};
+
+class play:public media_command{
+public:
+	QByteArray serialize()const override{
+		return "";
+	}
+	void deserialize(QByteArray data)override{
+	}
+	char magic_byte()const override{
+		return (char)magic_bytes::play_byte;
+	}
+	quint32 bytes_len()const override{
+		return 1;
+	}
+};
+
+class pause:public media_command{
+public:
+	QByteArray serialize()const override{
+		return "";
+	}
+	void deserialize(QByteArray data)override{
+	}
+	char magic_byte()const override{
+		return (char)magic_bytes::pause_byte;
+	}
+	quint32 bytes_len()const override{
+		return 1;
+	}
+};
+
+class rewind:public media_command{
+	int delta;
+public:
+	int get_delta()const{
+		return delta;
+	}
+	void set_delta(int delta){
+		this->delta = delta;
+	}
+	QByteArray serialize()const override{
+		QByteArray bytes(bytes_len(), '0');
+		char byte = (char)magic_bytes::rewind_byte;
+		memcpy(bytes.data(), &byte, 1);
+		memcpy(bytes.data()+1, &delta, 4);
+		return bytes;
+	}
+	void deserialize(QByteArray data)override{
+		data.remove(0, 1); //NOTE:remove magic byte
+		delta = data.toInt();
+	}
+	char magic_byte()const override{
+		return (char)magic_bytes::pause_byte;
+	}
+	quint32 bytes_len()const override{
+		return 5;
+	}
 };
 
 class file_command:public command{

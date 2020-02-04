@@ -6,13 +6,16 @@ CONFIG -= app_bundle
 
 TARGET = player_client
 INCLUDEPATH = ../common
-SOURCES +=  ../common/commands.cpp \
-		client_socket.cpp \
+SOURCES +=   client_socket.cpp \
 		client.cpp \
-		main.cpp
-HEADERS += ../common/commands.h \
-	client_socket.h \
-	client.h
+		main.cpp \
+		../common/commands.cpp \
+		../common/multithread_printer.cpp
+
+HEADERS += client_socket.h \
+	client.h \
+	../common/commands.h \
+	../common/multithread_printer.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

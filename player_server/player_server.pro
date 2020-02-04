@@ -1,18 +1,24 @@
 QT -= gui
-QT += network
+QT += network multimedia
 
 CONFIG += c++11 console
 CONFIG -= app_bundle
 
 TARGET = player_server
 INCLUDEPATH = ../common
-SOURCES +=  ../common/commands.cpp \
-		server.cpp \
+SOURCES += server.cpp \
 		server_socket.cpp \
-		main.cpp
+		play_worker.cpp \
+		main.cpp \
+		../common/commands.cpp \
+		../common/multithread_printer.cpp
+
 HEADERS += server.h \
 		server_socket.h \
-		../common/commands.h
+		play_worker.h \
+		utils.h \
+		../common/commands.h \
+		../common/multithread_printer.h
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
