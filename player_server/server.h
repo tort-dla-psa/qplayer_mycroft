@@ -36,6 +36,7 @@ public slots:
 	void on_read(QByteArray data);
 	void send(QByteArray data);
 	void on_play_progress(int progress);
+	void on_artist_change(artist a);
 signals:
 	void closed();
 	void send_to_cli(QByteArray cmd);

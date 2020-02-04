@@ -5,6 +5,7 @@
 #include <QMediaPlayer>
 #include "multithread_printer.h"
 #include "commands.h"
+#include "info.h"
 
 class play_worker:public QObject{
 	Q_OBJECT
@@ -36,5 +37,8 @@ public slots:
 	//void set_progress(int);
 signals:
 	void progress(int);
+	void artist_changed(artist artist);
 	void send_print(multithread_printer::message);
+private slots:
+	void on_metadata_change(const QString &key, const QVariant &value);
 };

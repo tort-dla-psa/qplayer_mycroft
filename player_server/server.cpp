@@ -73,3 +73,7 @@ void server::on_play_progress(int progress){
 	prgs.set_progress(progress);
 	send(prgs.serialize());
 }
+void server::on_artist_change(artist a){
+	print("artist changed:"+a.get_name());
+	send(a.serialize());
+}

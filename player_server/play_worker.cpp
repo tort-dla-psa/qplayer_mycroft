@@ -3,6 +3,7 @@
 #include <QException>
 #include <QMediaPlaylist>
 #include "play_worker.h"
+#include "info.h"
 
 play_worker::play_worker(QObject *parent)
 	:QObject(parent)
@@ -36,6 +37,10 @@ void play_worker::start(){
 	music->setPlaylist(playlist);
 	connect(music, &QMediaPlayer::positionChanged,
 			this, &play_worker::progress);
+
+	auto overloaded_func = QOverload<const QString &, const QVariant &>::of(&QMediaPlayer::metaDataChanged);
+	connect(music, overloaded_func,
+			this, &play_worker::on_metadata_change);
 	music->play();
 	/*
 	while(true){
@@ -76,5 +81,13 @@ void play_worker::process_cmd(QSharedPointer<command> data){
 			rewind(rewind_cmd->get_delta());
 			return;
 		}
+	}
+}
+void play_worker::on_metadata_change(const QString &key, const QVariant &value){
+	if(key == "Artist"){
+		auto artists = value.toStringList();
+		artist a;
+		a.set_name(artists.front());
+		emit artist_changed(a);
 	}
 }
