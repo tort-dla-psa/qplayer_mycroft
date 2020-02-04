@@ -1,5 +1,6 @@
 #include "server.h"
 #include "commands.h"
+#include "info.h"
 
 server::server(QString path, bool use_net, QObject *parent)
 	:QObject(parent)
@@ -68,7 +69,7 @@ void server::send(QByteArray data){
 }
 void server::on_play_progress(int progress){
 	print("play progress:"+QString::number(progress));
-	QByteArray data(4, '0');
-	memcpy(data.data(), &progress, 4);
-	send(data);
+	class progress prgs;
+	prgs.set_progress(progress);
+	send(prgs.serialize());
 }

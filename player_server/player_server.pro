@@ -19,6 +19,7 @@ HEADERS += server.h \
 		utils.h \
 		../common/commands.h \
 		../common/info.h \
+		../common/serializable.h \
 		../common/multithread_printer.h
 
 # Default rules for deployment.
