@@ -15,6 +15,8 @@ SOURCES +=   client_socket.cpp \
 HEADERS += client_socket.h \
 	client.h \
 	../common/commands.h \
+	../common/info.h \
+	../common/serializable.h \
 	../common/multithread_printer.h
 
 # Default rules for deployment.

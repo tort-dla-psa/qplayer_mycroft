@@ -18,6 +18,7 @@ HEADERS += server.h \
 		play_worker.h \
 		utils.h \
 		../common/commands.h \
+		../common/info.h \
 		../common/multithread_printer.h
 
 # Default rules for deployment.

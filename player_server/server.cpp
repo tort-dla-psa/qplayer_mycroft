@@ -68,4 +68,7 @@ void server::send(QByteArray data){
 }
 void server::on_play_progress(int progress){
 	print("play progress:"+QString::number(progress));
+	QByteArray data(4, '0');
+	memcpy(data.data(), &progress, 4);
+	send(data);
 }
