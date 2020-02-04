@@ -16,26 +16,21 @@ server::~server(){
 
 void server::start(){
 	print("making net_socket");
-	QThread* sock_thr = new QThread();
 	if(use_net){
 		QTcpServer* serv = new QTcpServer();
 		serv->listen(QHostAddress::Any, 4242);
 		serv->waitForNewConnection(-1);
 		auto m_cli = serv->nextPendingConnection();
 		print("new cli:"+m_cli->peerAddress().toString());
-		serv->moveToThread(sock_thr);
 		cli = new net_client(m_cli);
 		//serv->deleteLater();
 	}
-	cli->moveToThread(sock_thr);
 
-	connect(sock_thr, &QThread::started,
-			cli, &client::start);
 	connect(cli, &client::recieved,
 			this, &server::on_read);
 	connect((net_client*)cli, &net_client::send_print,
 			&printer, &multithread_printer::print);
-	sock_thr->start();
+	cli->start();
 
 	//player//
 	wrkr = new play_worker();

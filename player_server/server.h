@@ -14,7 +14,7 @@ class server:public QObject{
 	bool use_net;
 	client* cli;
 	play_worker* wrkr;
-	QThread* cli_thr, * play_thread;
+	QThread* play_thread;
 
 	multithread_printer printer;
 

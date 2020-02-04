@@ -31,17 +31,14 @@ void net_client::send_to_cli(QByteArray data){
 
 void net_client::close(){ }
 void net_client::start(){
-	while(true){
-		print("waiting for bytes");
-		sock->waitForReadyRead(-1);
-		auto bytes = sock->readAll();
-		print("got bytes:"+QString::fromUtf8(bytes));
-		emit recieved(bytes);
-		//send(bytes);
-	}
+	connect(sock, &QTcpSocket::readyRead,
+		this, &net_client::on_ready_read);
 }
 void net_client::on_client_state_changed(QAbstractSocket::SocketState state){}
 void net_client::on_ready_read(){
+	auto bytes = sock->readAll();
+	print("got bytes:"+QString::fromUtf8(bytes));
+	emit recieved(bytes);
 }
 void net_client::on_disconnected(){
 	sock->deleteLater();
