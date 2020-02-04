@@ -2,6 +2,7 @@
 #include <QObject>
 #include <QDir>
 #include <QSharedPointer>
+#include <QMediaPlayer>
 #include "multithread_printer.h"
 #include "commands.h"
 
@@ -9,6 +10,7 @@ class play_worker:public QObject{
 	Q_OBJECT
 	QDir dir;
 	bool dir_set;
+	QMediaPlayer* music;
 	int m_progress;
 	int update_usleep;
 	bool paused;

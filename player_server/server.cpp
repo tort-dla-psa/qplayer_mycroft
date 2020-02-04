@@ -51,10 +51,10 @@ void server::start(){
 void server::on_read(QByteArray data){
 	print("got data:"+QString::fromUtf8(data));
 	QSharedPointer<command> cmd;
-	if(data.front() == (char)magic_bytes::pause_byte){
-		cmd = QSharedPointer<command>(new pause());
-	}else if(data.front() == (char)magic_bytes::rewind_byte){
-		cmd = QSharedPointer<command>(new class rewind());
+	if(data.front() == (char)magic_bytes_cmd::pause_byte){
+		cmd = QSharedPointer<pause>::create();
+	}else if(data.front() == (char)magic_bytes_cmd::rewind_byte){
+		cmd = QSharedPointer<class rewind>::create();
 	}else{
 		print("unknown command");
 		return;

@@ -1,7 +1,6 @@
 #include <QThread>
 #include <QDebug>
 #include <QException>
-#include <QMediaPlayer>
 #include <QMediaPlaylist>
 #include "play_worker.h"
 
@@ -33,8 +32,10 @@ void play_worker::start(){
 	}
 	playlist->setPlaybackMode(QMediaPlaylist::Loop);
 
-	QMediaPlayer *music = new QMediaPlayer();
+	this->music = new QMediaPlayer();
 	music->setPlaylist(playlist);
+	connect(music, &QMediaPlayer::positionChanged,
+			this, &play_worker::progress);
 	music->play();
 	/*
 	while(true){
@@ -51,24 +52,29 @@ void play_worker::start(){
 void play_worker::pause(){
 	print("got paused cmd, now:"+QString(!paused?"true":"false"));
 	paused = !paused;
+	if(!paused){
+		music->pause();
+	}else{
+		music->play();
+	}
 }
 void play_worker::rewind(int delta){
 	print("got move progress cmd:"+QString::number(delta));
-	m_progress += delta;
+	music->setPosition(music->position()+delta);
 }
 void play_worker::process_cmd(QSharedPointer<command> data){
 	{
 		auto pause_cmd = data.dynamicCast<class pause>();
 		if(pause_cmd){
 			pause();
+			return;
 		}
-		return;
 	}
 	{
 		auto rewind_cmd = data.dynamicCast<class rewind>();
 		if(rewind_cmd){
 			rewind(rewind_cmd->get_delta());
+			return;
 		}
-		return;
 	}
 }

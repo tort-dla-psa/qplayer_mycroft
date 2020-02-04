@@ -3,10 +3,16 @@
 #include <QVector>
 #include <QString>
 
-enum class magic_bytes{
+enum class magic_bytes_cmd{
 	play_byte = '1',
 	pause_byte = '2',
 	rewind_byte = '3'
+};
+enum class magic_bytes_info{
+	duration = '1',
+	author = '2',
+	album = '3',
+	song= '4',
 };
 
 class command{
@@ -28,7 +34,7 @@ public:
 	void deserialize(QByteArray data)override{
 	}
 	char magic_byte()const override{
-		return (char)magic_bytes::play_byte;
+		return (char)magic_bytes_cmd::play_byte;
 	}
 	quint32 bytes_len()const override{
 		return 1;
@@ -43,7 +49,7 @@ public:
 	void deserialize(QByteArray data)override{
 	}
 	char magic_byte()const override{
-		return (char)magic_bytes::pause_byte;
+		return (char)magic_bytes_cmd::pause_byte;
 	}
 	quint32 bytes_len()const override{
 		return 1;
@@ -61,7 +67,7 @@ public:
 	}
 	QByteArray serialize()const override{
 		QByteArray bytes(bytes_len(), '0');
-		char byte = (char)magic_bytes::rewind_byte;
+		char byte = (char)magic_bytes_cmd::rewind_byte;
 		memcpy(bytes.data(), &byte, 1);
 		memcpy(bytes.data()+1, &delta, 4);
 		return bytes;
@@ -71,7 +77,7 @@ public:
 		delta = data.toInt();
 	}
 	char magic_byte()const override{
-		return (char)magic_bytes::pause_byte;
+		return (char)magic_bytes_cmd::pause_byte;
 	}
 	quint32 bytes_len()const override{
 		return 5;
