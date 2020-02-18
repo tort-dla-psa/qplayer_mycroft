@@ -9,27 +9,23 @@ client::client(QObject* parent)
 
 void client::start(){
 	sock = new net_socket();
-	QThread* sock_thr = new QThread();
+	this->sock_thr = new QThread();
 
 	sock->moveToThread(sock_thr);
 	connect(sock, &client_socket::recieved,
 			this, &client::on_recieve);
 	connect(sock_thr, &QThread::started,
 			sock, &client_socket::start);
-	connect(this, &client::got_data,
+
+	kbd = new keyboard_worker();
+	this->kbd_thr = new QThread();
+	kbd->moveToThread(kbd_thr);
+	connect(kbd_thr, &QThread::started,
+		kbd, &keyboard_worker::start);
+	connect(kbd, &keyboard_worker::got_data,
 			sock, &client_socket::send);
-
 	sock_thr->start();
-
-	QTextStream qtin(stdin);
-	while(true){
-		QString word;
-		qtin >> word;
-		if(word == "list"){
-			class list lst;
-			emit got_data(lst.serialize());
-		}
-	}
+	kbd_thr->start();
 }
 
 void client::on_recieve(QByteArray data){

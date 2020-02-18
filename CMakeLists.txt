@@ -25,6 +25,7 @@ add_executable(player_client
 	player_client/client_socket.cpp 
 	player_client/client.cpp 
 	player_client/main.cpp 
+	player_client/keyboard_worker.cpp
 	common/commands.cpp 
 	common/multithread_printer.cpp
 )

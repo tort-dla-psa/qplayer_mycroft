@@ -3,12 +3,14 @@
 #include <QThread>
 #include "client_socket.h"
 #include "multithread_printer.h"
+#include "keyboard_worker.h"
 
 class client:public QObject{
 	Q_OBJECT
 
-	QThread* sock_thr;
+	QThread* sock_thr,* kbd_thr;
 	client_socket* sock;
+	keyboard_worker* kbd;
 
 	inline void print(const QString &mes){
 		multithread_printer::message m;
