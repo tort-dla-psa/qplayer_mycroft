@@ -4,9 +4,11 @@
 #include <QString>
 
 enum class magic_bytes_cmd{
-	play_byte = '1',
-	pause_byte = '2',
-	rewind_byte = '3'
+	play_byte = (char)0,
+	pause_byte,
+	rewind_byte,
+
+	list_dir_byte,
 };
 
 class command:public serializable{
@@ -79,33 +81,16 @@ class file_command:public command{
 };
 
 class list:public file_command{
-	QVector<QString> names;
-	char delimeter='\0',
-	m_magic_byte='1';
 public:
-	QByteArray serialize()const{
-		QByteArray result;
-		for(const auto &name:names){
-			QByteArray bytes = name.toUtf8();
-			bytes.push_back(delimeter);
-			result.insert(result.size(), bytes);
-		}
+	QByteArray serialize()const override{
+		QByteArray result(1, (char)magic_bytes_cmd::list_dir_byte);
 		return result;
 	}
-	void deserialize(QByteArray data){
-		int prev_index = 0;
-		int index = data.indexOf(delimeter);
-		while(index != -1){
-			QString name;
-			auto subvector = data.mid(prev_index, index);
-			name.fromUtf8(subvector);
-			names.push_back(name);
-			data.remove(prev_index, subvector.size()+1);
-			prev_index = index;
-			index = data.indexOf(delimeter);
-		}
+	void deserialize(QByteArray data)override{}
+	char get_magic_byte()const override{
+		return (char)magic_bytes_cmd::list_dir_byte;
 	}
-	char get_magic_byte()const{
-		return m_magic_byte;
+	int get_length()const override{
+		return 1;
 	}
 };

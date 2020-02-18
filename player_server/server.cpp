@@ -5,7 +5,10 @@
 server::server(QString path, bool use_net, QObject *parent)
 	:QObject(parent)
 {
-	this->path = path;
+	this->dir = QDir(path);
+	if(!dir.exists()){
+		throw std::runtime_error("no such dir");
+	}
 	this->use_net = use_net;
 	connect(this, &server::send_print,
 			&printer, &multithread_printer::print);
@@ -31,6 +34,8 @@ void server::start(){
 			this, &server::on_read);
 	connect((net_client*)cli, &net_client::send_print,
 			&printer, &multithread_printer::print);
+	connect(this, &server::send_to_cli,
+			cli, &client::send_to_cli);
 	cli->start();
 
 	//player//
@@ -45,7 +50,7 @@ void server::start(){
 			wrkr, &play_worker::start);
 	connect(this, &server::send_cmd,
 			wrkr, &play_worker::process_cmd);
-	wrkr->open_dir(this->path);
+	wrkr->open_dir(this->dir.path());
 	play_thread->start();
 }
 
@@ -56,6 +61,10 @@ void server::on_read(QByteArray data){
 		cmd = QSharedPointer<pause>::create();
 	}else if(data.front() == (char)magic_bytes_cmd::rewind_byte){
 		cmd = QSharedPointer<class rewind>::create();
+	}else if(data.front() == (char)magic_bytes_cmd::list_dir_byte){
+		cmd = QSharedPointer<class list>::create();
+		list_dir();
+		return;
 	}else{
 		print("unknown command");
 		return;
@@ -76,4 +85,23 @@ void server::on_play_progress(int progress){
 void server::on_artist_change(artist a){
 	print("artist changed:"+a.get_name());
 	send(a.serialize());
+}
+
+void server::list_dir(){
+	QVector<QString> dirs, files;
+	QDir directory;
+	directory.setPath(this->dir.path());
+	directory.setFilter(QDir::Files | QDir::Dirs);
+	directory.setSorting(QDir::Type);
+	for(auto entry:directory.entryInfoList()){
+		if(entry.isDir()){
+			dirs.push_back(entry.fileName());
+		}else if(entry.isFile()){
+			files.push_back(entry.fileName());
+		}
+	}
+	class dir info;
+	info.set_dirs(dirs);
+	info.set_files(files);
+	send(info.serialize());
 }

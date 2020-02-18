@@ -38,9 +38,9 @@ void play_worker::start(){
 	connect(music, &QMediaPlayer::positionChanged,
 			this, &play_worker::progress);
 
-	auto overloaded_func = QOverload<const QString &, const QVariant &>::of(&QMediaPlayer::metaDataChanged);
-	connect(music, overloaded_func,
-			this, &play_worker::on_metadata_change);
+	//auto overloaded_func = QOverload<const QString &, const QVariant &>::of(&QMediaPlayer::metaDataChanged);
+	//connect(music, overloaded_func,
+	//		this, &play_worker::on_metadata_change);
 	music->play();
 	/*
 	while(true){
@@ -74,8 +74,7 @@ void play_worker::process_cmd(QSharedPointer<command> data){
 			pause();
 			return;
 		}
-	}
-	{
+	}{
 		auto rewind_cmd = data.dynamicCast<class rewind>();
 		if(rewind_cmd){
 			rewind(rewind_cmd->get_delta());

@@ -2,6 +2,7 @@
 #include <QObject>
 #include <QThread>
 #include <QString>
+#include <QDir>
 #include "server_socket.h"
 #include "play_worker.h"
 #include "utils.h"
@@ -15,6 +16,7 @@ class server:public QObject{
 	client* cli;
 	play_worker* wrkr;
 	QThread* play_thread;
+	QDir dir;
 
 	multithread_printer printer;
 
@@ -26,7 +28,6 @@ class server:public QObject{
 		m.mes = mes;
 		emit send_print(m);
 	}
-	QString path;
 public:
 	explicit server(QString path, bool use_net=true,
 					QObject *parent = nullptr);
@@ -37,6 +38,8 @@ public slots:
 	void send(QByteArray data);
 	void on_play_progress(int progress);
 	void on_artist_change(artist a);
+	//commands
+	void list_dir();
 signals:
 	void closed();
 	void send_to_cli(QByteArray cmd);
