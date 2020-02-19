@@ -1,6 +1,7 @@
 #pragma once
 #include <QVector>
 #include <QString>
+#include <QSharedPointer>
 #include "serializable.h"
 
 enum class magic_bytes_cmd{
@@ -9,11 +10,14 @@ enum class magic_bytes_cmd{
 	rewind_byte,
 
 	list_dir_byte,
+	open_byte
 };
 
 class command:public serializable{
 public:
 };
+
+Q_DECLARE_METATYPE(QSharedPointer<command>);
 
 class media_command:public command{
 public:
@@ -72,4 +76,24 @@ public:
 		str << get_magic_byte();
 	}
 	void deserialize(QDataStream &str)override{}
+};
+
+class open:public file_command{
+	QString path;
+public:
+	void set_path(QString path){
+		this->path = path;
+	}
+	QString get_path()const{
+		return path;
+	} 
+	qint8 get_magic_byte()const override{
+		return (qint8)magic_bytes_cmd::open_byte;
+	}
+	void serialize(QDataStream &str)const override{
+		str << get_magic_byte() << path;
+	}
+	void deserialize(QDataStream &str)override{
+		str >> path;
+	}
 };

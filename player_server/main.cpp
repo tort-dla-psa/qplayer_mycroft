@@ -4,7 +4,6 @@
 #include "multithread_printer.h"
 
 Q_DECLARE_METATYPE(multithread_printer::message);
-Q_DECLARE_METATYPE(QSharedPointer<command>);
 int main(int argc, char *argv[]){
 	QCoreApplication a(argc, argv);
 	qRegisterMetaType<multithread_printer::message>();

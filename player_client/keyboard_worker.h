@@ -1,5 +1,7 @@
 #pragma once
 #include <QObject>
+#include <QSharedPointer>
+#include "commands.h"
 
 class keyboard_worker:public QObject{
 	Q_OBJECT
@@ -8,5 +10,5 @@ public:
 public slots:
 	void start();
 signals:
-	void got_data(QByteArray data);
+	void got_command(QSharedPointer<command> data);
 };

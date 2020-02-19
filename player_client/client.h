@@ -1,9 +1,12 @@
 #pragma once
 #include <QObject>
 #include <QThread>
+#include <QDir>
+#include <QSharedPointer>
 #include "client_socket.h"
 #include "multithread_printer.h"
 #include "keyboard_worker.h"
+#include "commands.h"
 
 class client:public QObject{
 	Q_OBJECT
@@ -21,11 +24,15 @@ class client:public QObject{
 		m.mes = mes;
 		emit send_print(m);
 	}
+
+	QVector<QString> files;
 public:
 	client(QObject* parent = nullptr);
 public slots:
 	void start();
 	void on_recieve(QByteArray data);
+private slots:
+	void process_kbd_command(QSharedPointer<command> cmd);
 signals:
 	void closed();
 	void got_data(QByteArray data);

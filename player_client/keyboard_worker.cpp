@@ -1,4 +1,5 @@
 #include "keyboard_worker.h"
+#include <QSharedPointer>
 #include <QTextStream>
 #include <QString>
 #include "info.h"
@@ -13,12 +14,24 @@ void keyboard_worker::start(){
 	while(true){
 		QString word;
 		qtin >> word;
+		QSharedPointer<command> cmd;
 		if(word == "list"){
-			class list lst;
-			QByteArray data;
-			QDataStream str(&data, QIODevice::WriteOnly);
-			str << lst;
-			emit got_data(data);
+			cmd = QSharedPointer<class list>::create();
+		}else if(word.count("open")!=0){
+			auto opn = QSharedPointer<class open>::create();
+			if(word == "open .."){
+				opn->set_path("..");
+				cmd = opn;
+			}else{
+				QRegExp rx("open (\\d+)"); //open 2
+				if(rx.exactMatch(word)){
+					opn->set_path(rx.cap());
+					cmd = opn;
+				}
+			}
+		}
+		if(cmd){
+			emit got_command(cmd);
 		}
 	}
 }
