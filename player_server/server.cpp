@@ -57,11 +57,17 @@ void server::start(){
 void server::on_read(QByteArray data){
 	print("got data:"+QString::fromUtf8(data));
 	QSharedPointer<command> cmd;
-	if(data.front() == (char)magic_bytes_cmd::pause_byte){
+	QDataStream str(&data, QIODevice::ReadOnly);
+	qint8 ch;
+	str >>ch;
+
+	if(ch == (qint8)magic_bytes_cmd::pause_byte){
 		cmd = QSharedPointer<pause>::create();
-	}else if(data.front() == (char)magic_bytes_cmd::rewind_byte){
-		cmd = QSharedPointer<class rewind>::create();
-	}else if(data.front() == (char)magic_bytes_cmd::list_dir_byte){
+	}else if(ch == (qint8)magic_bytes_cmd::rewind_byte){
+		class rewind* r = new class rewind;
+		str >> *r;
+		cmd = QSharedPointer<class rewind>(r);
+	}else if(ch == (qint8)magic_bytes_cmd::list_dir_byte){
 		cmd = QSharedPointer<class list>::create();
 		list_dir();
 		return;
@@ -69,22 +75,26 @@ void server::on_read(QByteArray data){
 		print("unknown command");
 		return;
 	}
-	cmd->deserialize(data);
 	emit send_cmd(cmd);
 }
 void server::send(QByteArray data){
-	print("sending data:"+QString::fromUtf8(data));
 	emit send_to_cli(data);
 }
 void server::on_play_progress(int progress){
 	print("play progress:"+QString::number(progress));
 	class progress prgs;
 	prgs.set_progress(progress);
-	send(prgs.serialize());
+	QByteArray data;
+	QDataStream str(&data, QIODevice::WriteOnly);
+	str << prgs;
+	send(data);
 }
 void server::on_artist_change(artist a){
 	print("artist changed:"+a.get_name());
-	send(a.serialize());
+	QByteArray data;
+	QDataStream str(&data, QIODevice::WriteOnly);
+	str << a;
+	send(data);
 }
 
 void server::list_dir(){
@@ -103,5 +113,8 @@ void server::list_dir(){
 	class dir info;
 	info.set_dirs(dirs);
 	info.set_files(files);
-	send(info.serialize());
+	QByteArray data;
+	QDataStream str(&data, QIODevice::WriteOnly);
+	str << info;
+	send(data);
 }

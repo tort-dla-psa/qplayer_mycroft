@@ -1,10 +1,10 @@
 #pragma once
-#include "serializable.h"
 #include <QVector>
 #include <QString>
+#include "serializable.h"
 
 enum class magic_bytes_cmd{
-	play_byte = (char)0,
+	play_byte = (qint8)0,
 	pause_byte,
 	rewind_byte,
 
@@ -21,36 +21,28 @@ public:
 
 class play:public media_command{
 public:
-	QByteArray serialize()const override{
-		return "";
+	qint8 get_magic_byte()const override{
+		return (qint8)magic_bytes_cmd::play_byte;
 	}
-	void deserialize(QByteArray data)override{
+	void serialize(QDataStream &str)const override{
+		str << get_magic_byte();
 	}
-	char get_magic_byte()const override{
-		return (char)magic_bytes_cmd::play_byte;
-	}
-	int get_length()const override{
-		return 1;
-	}
+	void deserialize(QDataStream &str)override{}
 };
 
 class pause:public media_command{
 public:
-	QByteArray serialize()const override{
-		return "";
+	qint8 get_magic_byte()const override{
+		return (qint8)magic_bytes_cmd::pause_byte;
 	}
-	void deserialize(QByteArray data)override{
+	void serialize(QDataStream &str)const override{
+		str << get_magic_byte();
 	}
-	char get_magic_byte()const override{
-		return (char)magic_bytes_cmd::pause_byte;
-	}
-	int get_length()const override{
-		return 1;
-	}
+	void deserialize(QDataStream &str)override{}
 };
 
 class rewind:public media_command{
-	int delta;
+	qint32 delta;
 public:
 	int get_delta()const{
 		return delta;
@@ -58,39 +50,26 @@ public:
 	void set_delta(int delta){
 		this->delta = delta;
 	}
-	QByteArray serialize()const override{
-		QByteArray bytes(get_length(), '0');
-		char byte = (char)magic_bytes_cmd::rewind_byte;
-		memcpy(bytes.data(), &byte, 1);
-		memcpy(bytes.data()+1, &delta, 4);
-		return bytes;
+	qint8 get_magic_byte()const override{
+		return (qint8)magic_bytes_cmd::pause_byte;
 	}
-	void deserialize(QByteArray data)override{
-		data.remove(0, 1); //NOTE:remove magic byte
-		delta = data.toInt();
+	void serialize(QDataStream &str)const override{
+		str << get_magic_byte() << delta;
 	}
-	char get_magic_byte()const override{
-		return (char)magic_bytes_cmd::pause_byte;
-	}
-	int get_length()const override{
-		return 5;
+	void deserialize(QDataStream &str)override{
+		str >> delta;
 	}
 };
 
-class file_command:public command{
-};
+class file_command:public command{};
 
 class list:public file_command{
 public:
-	QByteArray serialize()const override{
-		QByteArray result(1, (char)magic_bytes_cmd::list_dir_byte);
-		return result;
+	qint8 get_magic_byte()const override{
+		return (qint8)magic_bytes_cmd::list_dir_byte;
 	}
-	void deserialize(QByteArray data)override{}
-	char get_magic_byte()const override{
-		return (char)magic_bytes_cmd::list_dir_byte;
+	void serialize(QDataStream &str)const override{
+		str << get_magic_byte();
 	}
-	int get_length()const override{
-		return 1;
-	}
+	void deserialize(QDataStream &str)override{}
 };

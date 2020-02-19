@@ -9,11 +9,13 @@ INCLUDEPATH = ../common
 SOURCES +=   client_socket.cpp \
 		client.cpp \
 		main.cpp \
+		keyboard_worker.cpp \
 		../common/commands.cpp \
 		../common/multithread_printer.cpp
 
 HEADERS += client_socket.h \
 	client.h \
+	keyboard_worker.h \
 	../common/commands.h \
 	../common/info.h \
 	../common/serializable.h \

@@ -4,7 +4,6 @@
 #include <QTcpServer>
 #include <QThread>
 #include <QSharedPointer>
-#include "utils.h"
 #include "multithread_printer.h"
 #include "commands.h"
 

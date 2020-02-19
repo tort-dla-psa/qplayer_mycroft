@@ -13,7 +13,6 @@ net_socket::~net_socket(){}
 
 void net_socket::send(QByteArray data){
 	qint64 counter = 0;
-	qDebug()<<"sending data:"<<QString::fromUtf8(data)<<"\n";
 	while(counter != data.size()){
 		auto count = sock->write(data.data()+counter, data.size()-counter);
 		if(count <= 0){
@@ -36,6 +35,5 @@ void net_socket::start(){
 
 void net_socket::on_ready_read(){
 	auto bytes = sock->readAll();
-	qDebug()<<"got data: "<<QString::fromUtf8(bytes)<<"\n";
 	emit recieved(bytes);
 }

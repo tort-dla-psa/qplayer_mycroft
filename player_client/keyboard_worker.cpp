@@ -7,6 +7,7 @@
 keyboard_worker::keyboard_worker(QObject* parent)
     :QObject(parent)
 {}
+
 void keyboard_worker::start(){
 	QTextStream qtin(stdin);
 	while(true){
@@ -14,7 +15,10 @@ void keyboard_worker::start(){
 		qtin >> word;
 		if(word == "list"){
 			class list lst;
-			emit got_data(lst.serialize());
+			QByteArray data;
+			QDataStream str(&data, QIODevice::WriteOnly);
+			str << lst;
+			emit got_data(data);
 		}
 	}
 }

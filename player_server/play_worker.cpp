@@ -35,8 +35,10 @@ void play_worker::start(){
 
 	this->music = new QMediaPlayer();
 	music->setPlaylist(playlist);
-	connect(music, &QMediaPlayer::positionChanged,
-			this, &play_worker::progress);
+
+	//emit progress
+	//connect(music, &QMediaPlayer::positionChanged,
+	//		this, &play_worker::progress);
 
 	//auto overloaded_func = QOverload<const QString &, const QVariant &>::of(&QMediaPlayer::metaDataChanged);
 	//connect(music, overloaded_func,

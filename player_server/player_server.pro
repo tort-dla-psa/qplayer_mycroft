@@ -16,7 +16,6 @@ SOURCES += server.cpp \
 HEADERS += server.h \
 		server_socket.h \
 		play_worker.h \
-		utils.h \
 		../common/commands.h \
 		../common/info.h \
 		../common/serializable.h \

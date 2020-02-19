@@ -22,7 +22,6 @@ net_client::~net_client(){
 
 void net_client::send_to_cli(QByteArray data){
 	qint64 counter = 0;
-	print("sending bytes:"+QString::fromUtf8(data));
 	while(counter != data.size()){
 		auto count = sock->write(data.data()+counter, data.size()-counter);
 		counter+=count;
@@ -37,7 +36,6 @@ void net_client::start(){
 void net_client::on_client_state_changed(QAbstractSocket::SocketState state){}
 void net_client::on_ready_read(){
 	auto bytes = sock->readAll();
-	print("got bytes:"+QString::fromUtf8(bytes));
 	emit recieved(bytes);
 }
 void net_client::on_disconnected(){

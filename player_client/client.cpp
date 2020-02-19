@@ -1,4 +1,5 @@
 #include <QTextStream>
+#include <QDataStream>
 #include "client.h"
 #include "commands.h"
 #include "info.h"
@@ -30,9 +31,13 @@ void client::start(){
 
 void client::on_recieve(QByteArray data){
 	qDebug()<<"got data:"<<QString::fromUtf8(data);
-	if(data.front() == (char)magic_bytes_info::dir){
+	QDataStream str(&data, QIODevice::ReadOnly);
+	qint8 ch;
+	str >> ch;
+
+	if(ch == (char)magic_bytes_info::dir){
 		class dir d;
-		d.deserialize(data);
+		str >> d;
 		qDebug()<<"dirs:";
 		for(auto &d_:d.get_dirs()){
 			qDebug()<<d_;
