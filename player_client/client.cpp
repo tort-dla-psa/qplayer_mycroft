@@ -31,7 +31,6 @@ void client::start(){
 }
 
 void client::on_recieve(QByteArray data){
-	qDebug()<<"got data:"<<QString::fromUtf8(data);
 	QDataStream str(&data, QIODevice::ReadOnly);
 	qint8 ch;
 	str >> ch;

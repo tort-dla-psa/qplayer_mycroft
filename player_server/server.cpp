@@ -55,7 +55,6 @@ void server::start(){
 }
 
 void server::on_read(QByteArray data){
-	print("got data:"+QString::fromUtf8(data));
 	QSharedPointer<command> cmd;
 	QDataStream str(&data, QIODevice::ReadOnly);
 	qint8 ch;
@@ -68,8 +67,13 @@ void server::on_read(QByteArray data){
 		str >> *r;
 		cmd = QSharedPointer<class rewind>(r);
 	}else if(ch == (qint8)magic_bytes_cmd::list_dir_byte){
-		cmd = QSharedPointer<class list>::create();
 		list_dir();
+		return;
+	}else if(ch == (qint8)magic_bytes_cmd::open_byte){
+		class open* opn = new class open;
+		str >> *opn;
+		open(opn->get_path());
+		delete opn;
 		return;
 	}else{
 		print("unknown command");
@@ -89,6 +93,7 @@ void server::on_play_progress(int progress){
 	str << prgs;
 	send(data);
 }
+
 void server::on_artist_change(artist a){
 	print("artist changed:"+a.get_name());
 	QByteArray data;
@@ -117,4 +122,8 @@ void server::list_dir(){
 	QDataStream str(&data, QIODevice::WriteOnly);
 	str << info;
 	send(data);
+}
+
+void server::open(QString path){
+	this->dir.setPath(dir.absolutePath()+"/"+path);
 }

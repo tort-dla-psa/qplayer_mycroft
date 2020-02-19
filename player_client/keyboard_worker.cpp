@@ -12,8 +12,7 @@ keyboard_worker::keyboard_worker(QObject* parent)
 void keyboard_worker::start(){
 	QTextStream qtin(stdin);
 	while(true){
-		QString word;
-		qtin >> word;
+		QString word = qtin.readLine();
 		QSharedPointer<command> cmd;
 		if(word == "list"){
 			cmd = QSharedPointer<class list>::create();
